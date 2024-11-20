@@ -1,18 +1,56 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Pokémon List</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">Pokémon Finder</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item *ngFor="let pokemon of pokemons">
-      <ion-label>{{ pokemon.name | titlecase }}</ion-label>
-      <a href="{{ pokemon.url}}"><ion-label>{{ pokemon.url}}</ion-label></a>
-      
-    </ion-item>
-  
-  </ion-list>
+<ion-content class="ion-padding">
+  <!-- Input para buscar un Pokémon -->
+  <ion-item class="input-container">
+    <ion-label position="floating" class="label-spacing">Ingrese el nombre del Pokémon:</ion-label>
+    <ion-input [(ngModel)]="pokemonName" placeholder="e.g., ditto"></ion-input>
+  </ion-item>
 
-  <ion-spinner *ngIf="loading" class="loading-spinner"></ion-spinner>
+  <!-- Botón de búsqueda -->
+  <ion-button expand="block" color="secondary" (click)="fetchPokemon()">Search Pokémon</ion-button>
+
+  <!-- Spinner de carga -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent" class="loading-spinner"></ion-spinner>
+  </div>
+
+  <!-- Contenedor del Pokémon -->
+  <div *ngIf="pokemon" class="pokemon-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">
+          <img
+            [src]="pokemon.sprites.front_default"
+            alt="{{ pokemon.name }}"
+            class="pokemon-image"
+          />
+          {{ pokemon.name | titlecase }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <p><strong>Base Experience:</strong> {{ pokemon.base_experience }}</p>
+              <p><strong>Height:</strong> {{ pokemon.height }}</p>
+              <p><strong>Weight:</strong> {{ pokemon.weight }}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <p><strong>Abilities:</strong></p>
+              <ul>
+                <li *ngFor="let ability of pokemon.abilities">{{ ability.ability.name }}</li>
+              </ul>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

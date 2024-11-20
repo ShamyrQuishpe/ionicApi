@@ -1,33 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { PokemonService } from 'src/app/services/pokemon.service';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-pokemon-list',
   templateUrl: './pokemon-list.page.html',
   styleUrls: ['./pokemon-list.page.scss'],
 })
-export class PokemonListPage implements OnInit {
-  pokemons: any[] = [];
-  loading = false;
+export class PokemonListPage {
+  pokemonName: string = ''; 
+  pokemon: any = null; 
+  loading: boolean = false; 
 
-  constructor(private pokemonService: PokemonService) {}
+  constructor(private http: HttpClient) {}
 
-  ngOnInit() {
-    this.fetchPokemons();
-    
-  }
+  fetchPokemon() {
+    if (!this.pokemonName.trim()) {
+      alert('Please enter a Pokémon name!');
+      return;
+    }
 
-  fetchPokemons() {
     this.loading = true;
-    this.pokemonService.getPokemons(50).subscribe({
-      next: (response) => {
-        this.pokemons = response.results;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error fetching Pokémon:', error);
-        this.loading = false;
-      },
-    });
+    this.http
+      .get(`https://pokeapi.co/api/v2/pokemon/${this.pokemonName.toLowerCase()}`)
+      .subscribe(
+        (data: any) => {
+          this.pokemon = data;
+          this.loading = false;
+        },
+        (error) => {
+          alert('Pokémon not found!');
+          this.loading = false;
+        }
+      );
   }
 }
